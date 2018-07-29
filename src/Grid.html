@@ -1,0 +1,136 @@
+<table>
+  <tr>
+    <th>Disciplines</th>
+    <th colspan={maxPracticeCount} class="center">Maturity</th>
+  </tr>
+  {#each disciplines as discipline}
+    <tr>
+      <th>{discipline.discipline}</th>
+      {#each discipline.practices as practice, i}
+        <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="background-color: rgba({practice.r}, {practice.g}, {practice.b}, {practice.opacity})">{practice.practice}</td>
+      {/each}
+    </tr>
+  {/each}
+</table>
+
+<style>
+  .center {
+    text-align: center;
+  }
+</style>
+
+<script>
+
+ let getID = () =>
+   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8)
+      return v.toString(16)
+    })
+
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  const spanTable = {
+    1: {1:[1]},
+    2: {1:[2], 2:[1, 1]},
+    3: {1:[3], 2:[2, 1], 3:[1, 1, 1]},
+    4: {1:[4], 2:[2, 2], 3:[2, 1, 1], 4:[1, 1, 1, 1]},
+    5: {1:[5], 2:[2, 3], 3:[2, 2, 1], 4:[2, 1, 1, 1], 5:[1, 1, 1, 1, 1]},
+    6: {1:[6], 2:[3, 3], 3:[2, 2, 2], 4:[2, 2, 1, 1], 5:[2, 1, 1, 1, 1], 6:[1, 1, 1, 1, 1, 1]},  // TODO: Expand this to allow for up to 8
+  }
+
+
+  export default {
+
+    tag: 'matrx-grid',
+
+    data() {
+      return {
+        baseColor: "#2E8468",
+      }
+    },
+
+    helpers: {
+      spanTable
+    },
+
+    computed: {
+
+      junk: (s) => {
+        console.log(s.maxPracticeCount)
+      },
+
+      maxPracticeCount: ({disciplines}) => {
+        let maxPracticeCount = 0
+        for (let discipline of disciplines) {
+          maxPracticeCount = Math.max(maxPracticeCount, discipline.practices.length)
+        }
+        return maxPracticeCount
+      },
+
+      error: ({maxPracticeCount}) => {
+        if (maxPracticeCount > 6) {  // TODO: Increase here and line below if we increase the spanTable
+          throw new Error("Max allowed practices is 6. You have " + maxPracticeCount + " in one (or more) discipline(s)")
+          return true
+        } else {
+          return false
+        }
+      },
+
+      levelConfigAnnotated: ({levelConfig, baseColor}) => {
+        let levelConfigAnnotated = []
+        let baseColorCount = 0
+        for (let level of levelConfig) {
+          if (! level.color)
+            baseColorCount++
+        }
+        let i = 0
+        for (let level of levelConfig) {
+          if (! level.color) {
+            level.color = baseColor
+            level.opacity = (baseColorCount - i - 1) / (baseColorCount - 1)
+          } else {
+            level.opacity = 1
+          }
+          if (! level.description) {
+            level.description = ""
+          }
+          levelConfigAnnotated.push(level)
+          i++
+        }
+        return levelConfigAnnotated
+      },
+
+      disciplinesAnnotated: ({disciplines, levelConfigAnnotated}) => {
+        let disciplinesAnnotated = disciplines
+        for (let discipline of disciplines) {
+          for (let practice of discipline.practices) {
+            practice.id = getID()
+            let level = levelConfigAnnotated.find((level) => {
+              return practice.assessment === level.label
+            })
+            practice.color = level.color
+            practice.r = hexToRgb(practice.color).r
+            practice.g = hexToRgb(practice.color).g
+            practice.b = hexToRgb(practice.color).b
+            practice.opacity = level.opacity
+          }
+        }
+        return disciplinesAnnotated
+      },
+
+    },
+
+    components: {
+      // Slice: './Slice.html',
+    },
+
+  }
+
+</script>

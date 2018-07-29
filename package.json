@@ -1,0 +1,32 @@
+{
+  "name": "matrx-grid",
+  "version": "0.1.0",
+  "repository": "https://github.com/morganmaccherone/matrx-grid",
+  "license": "MIT",
+  "svelte": "src/Grid.html",
+  "module": "matrx-grid.mjs",
+  "main": "matrx-grid.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "aliv --pathIndex ./public & rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "aliv": "^1.11.0",
+    "rollup": "^0.60.1",
+    "rollup-plugin-svelte": "^4.1.0",
+    "svelte": "^2.7.2"
+  },
+  "keywords": [
+    "svelte",
+    "grid",
+    "heatmap",
+    "visualization",
+    "matrx"
+  ],
+  "files": [
+    "src",
+    "matrx-grid.mjs",
+    "matrix-grid.js"
+  ]
+}

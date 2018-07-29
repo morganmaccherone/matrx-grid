@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset='utf8'>
+	<meta name='viewport' content='width=device-width'>
+
+	<title>MatrX-Radar example</title>
+
+	<link rel='stylesheet' href='global.css'>
+
+	<!-- <base href="/" /> -->
+
+</head>
+
+<body>
+	<script src='../matrx-grid.js'></script>
+	<script>
+	var radar = new MatrxGrid({
+		target: document.body,
+		data: {
+			// baseColor: "#AA0000",  // Default is MatrX green
+			levelConfig: [
+				// levelConfig[0]  is the "best" level, closest to center, and baseColor
+				{label: "Culture", description: "We have fully adopted this practice"},
+				// Other levels without a color will be a gradient of the baseColor
+				{label: "Actions", description: "We’re in the process of adopting this practice"},
+				{label: "Words", description: "We’re making plans to adopt this practice"},
+				// The last index without a color will be white
+				{label: "Thoughts", description: "We have not put much thought into this practice"},
+				// You can specify a color for any of the levels, useful for NA or the like
+				{label: "Unknown", description: "Unassessed or Needs follow up", color: "#A0C5DA"},
+
+				{label: "Trade-off", color: "#E2E2E2", description: "We have decided this practice is not worth the ‘cost’ to us"},
+				{label: "Deferrals", color: "#6B6B6B", description: "The organization is not yet able to support easily adopting this practice"}
+			],
+			disciplines: [
+				{
+					discipline: "Artisanship",
+					practices: [
+						{
+							practice: "Yellow belt",
+							description: "100% of group members... Yellow Belt training",
+							assessment: "Culture",
+						},
+						{
+							practice: "Green belt",
+							description: "blah",
+							assessment: "Thoughts",
+						},
+						{
+							practice: "Brown belt",
+							description: "At least one brown belt",
+							assessment: "Thoughts",
+						},
+						{
+							practice: "Black belt",
+							description: "At least one black belt",
+							assessment: "Thoughts",
+						},
+					]
+				},
+				{
+					discipline: "Architecture & Design",
+					practices: [
+						{
+							practice: "Threat modeling",
+							description: "blah blah",
+							assessment: "Thoughts",
+						},
+					]
+				},
+				{
+					discipline: "Software Composition Analysis (SCA)",
+					practices: [
+						{
+							practice: "SCA in Pipeline",
+							description: "blah blah",
+							assessment: "Actions",
+						},
+					]
+				},
+				{
+					discipline: "Primary Code Analysis (PCA)",
+					practices: [
+						{
+							practice: "PCA in Pipeline",
+							description: "blah blah",
+							assessment: "Actions",
+						},
+					]
+				},
+				{
+					discipline: "Independent Security Assessment",
+					practices: [
+						{
+							practice: "Pen Testing",
+							description: "blah blah",
+							assessment: "Actions",
+						},
+						{
+							practice: "Red Teaming",
+							description: "blah blah",
+							assessment: "Trade-off",
+						},
+					]
+				},
+
+				{
+					discipline: "DevSecOps Tools",
+					practices: [
+						{practice: "PCA in pipeline", description: "blah, blah", assessment: "Thoughts"},
+						{practice: "SCA in pipeline", description: "blah, blah", assessment: "Unknown"},
+						{practice: "Working agreements", description: "blah, blah", assessment: "Trade-off"},
+					]
+				},
+			]
+		}
+	});
+
+</script>
+</body>
+</html>
