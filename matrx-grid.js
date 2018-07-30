@@ -168,6 +168,34 @@
 	   } : null;
 	 }
 
+	 function hexAndOpacityToRgb(hex, alpha) {
+	   const rgb = hexToRgb(hex);
+	   const oneMinusAlphaTimes255 = 255 * (1 - alpha);
+	   const r = rgb.r * alpha + oneMinusAlphaTimes255;
+	   const g = rgb.g * alpha + oneMinusAlphaTimes255;
+	   const b = rgb.b * alpha + oneMinusAlphaTimes255;
+	   return {r, g, b}
+	 }
+
+	 function rgbToHex(rgb) {
+	   return "#" + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1).split('.')[0]
+	 }
+
+	 function bestTextColor(rgb) {
+	   if ((rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114) > 186) {
+	     return "#000000"
+	   } else {
+	     return "#ffffff"
+	   }
+	 }
+
+	 function getBackgroundAndTextColor(hex, alpha) {
+	   const rgb = hexAndOpacityToRgb(hex, alpha);
+	   const bgColor = rgbToHex(rgb);
+	   const textColor = bestTextColor(rgb);
+	   return {bgColor, textColor}
+	 }
+
 	 const spanTable = {
 	   1: {1:[1]},
 	   2: {1:[2], 2:[1, 1]},
@@ -178,11 +206,7 @@
 	 };
 
 
-	 function junk(s) {
-	  console.log(s.maxPracticeCount);
-	}
-
-	function maxPracticeCount({disciplines}) {
+	 function maxPracticeCount({disciplines}) {
 	  let maxPracticeCount = 0;
 	  for (let discipline of disciplines) {
 	    maxPracticeCount = Math.max(maxPracticeCount, discipline.practices.length);
@@ -214,6 +238,9 @@
 	    } else {
 	      level.opacity = 1;
 	    }
+	    let colors = getBackgroundAndTextColor(level.color, level.opacity);
+	    level.bgColor = colors.bgColor;
+	    level.textColor = colors.textColor;
 	    if (! level.description) {
 	      level.description = "";
 	    }
@@ -231,11 +258,8 @@
 	      let level = levelConfigAnnotated.find((level) => {
 	        return practice.assessment === level.label
 	      });
-	      practice.color = level.color;
-	      practice.r = hexToRgb(practice.color).r;
-	      practice.g = hexToRgb(practice.color).g;
-	      practice.b = hexToRgb(practice.color).b;
-	      practice.opacity = level.opacity;
+	      practice.bgColor = level.bgColor;
+	      practice.textColor = level.textColor;
 	    }
 	  }
 	  return disciplinesAnnotated
@@ -272,7 +296,7 @@
 				th.textContent = "Disciplines";
 				text_1 = createText("\n    ");
 				th_1 = createElement("th");
-				th_1.textContent = "Maturity";
+				th_1.textContent = "Practices";
 				text_4 = createText("\n  ");
 
 				for (var i = 0; i < each_blocks.length; i += 1) {
@@ -413,7 +437,8 @@
 				td = createElement("td");
 				text = createText(text_value);
 				td.colSpan = td_colspan_value = spanTable[ctx.maxPracticeCount][ctx.discipline.practices.length][ctx.i];
-				setStyle(td, "background-color", "rgba(" + ctx.practice.r + ", " + ctx.practice.g + ", " + ctx.practice.b + ", " + ctx.practice.opacity + ")");
+				setStyle(td, "color", ctx.practice.textColor);
+				setStyle(td, "background-color", ctx.practice.bgColor);
 			},
 
 			m(target, anchor) {
@@ -431,7 +456,8 @@
 				}
 
 				if (changed.disciplines) {
-					setStyle(td, "background-color", "rgba(" + ctx.practice.r + ", " + ctx.practice.g + ", " + ctx.practice.b + ", " + ctx.practice.opacity + ")");
+					setStyle(td, "color", ctx.practice.textColor);
+					setStyle(td, "background-color", ctx.practice.bgColor);
 				}
 			},
 
@@ -493,8 +519,6 @@
 		if (changed.disciplines || changed.levelConfigAnnotated) {
 			if (this._differs(state.disciplinesAnnotated, (state.disciplinesAnnotated = disciplinesAnnotated(state)))) changed.disciplinesAnnotated = true;
 		}
-
-		if (this._differs(state.junk, (state.junk = junk(state)))) changed.junk = true;
 	};
 
 	return Grid;

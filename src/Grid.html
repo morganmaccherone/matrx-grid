@@ -1,13 +1,14 @@
 <table>
   <tr>
     <th>Disciplines</th>
-    <th colspan={maxPracticeCount} class="center">Maturity</th>
+    <th colspan={maxPracticeCount} class="center">Practices</th>
   </tr>
   {#each disciplines as discipline}
     <tr>
       <th>{discipline.discipline}</th>
       {#each discipline.practices as practice, i}
-        <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="background-color: rgba({practice.r}, {practice.g}, {practice.b}, {practice.opacity})">{practice.practice}</td>
+        <!-- <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="color: {practice.textColor}; background-color: rgba({practice.r}, {practice.g}, {practice.b}, {practice.opacity});">{practice.practice}</td> -->
+        <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="color: {practice.textColor}; background-color: {practice.bgColor};">{practice.practice}</td>
       {/each}
     </tr>
   {/each}
@@ -36,6 +37,34 @@
     } : null;
   }
 
+  function hexAndOpacityToRgb(hex, alpha) {
+    const rgb = hexToRgb(hex)
+    const oneMinusAlphaTimes255 = 255 * (1 - alpha)
+    const r = rgb.r * alpha + oneMinusAlphaTimes255
+    const g = rgb.g * alpha + oneMinusAlphaTimes255
+    const b = rgb.b * alpha + oneMinusAlphaTimes255
+    return {r, g, b}
+  }
+
+  function rgbToHex(rgb) {
+    return "#" + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1).split('.')[0]
+  }
+
+  function bestTextColor(rgb) {
+    if ((rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114) > 186) {
+      return "#000000"
+    } else {
+      return "#ffffff"
+    }
+  }
+
+  function getBackgroundAndTextColor(hex, alpha) {
+    const rgb = hexAndOpacityToRgb(hex, alpha)
+    const bgColor = rgbToHex(rgb)
+    const textColor = bestTextColor(rgb)
+    return {bgColor, textColor}
+  }
+
   const spanTable = {
     1: {1:[1]},
     2: {1:[2], 2:[1, 1]},
@@ -62,9 +91,9 @@
 
     computed: {
 
-      junk: (s) => {
-        console.log(s.maxPracticeCount)
-      },
+      // junk: (s) => {
+      //   console.log(s.maxPracticeCount)
+      // },
 
       maxPracticeCount: ({disciplines}) => {
         let maxPracticeCount = 0
@@ -98,6 +127,9 @@
           } else {
             level.opacity = 1
           }
+          let colors = getBackgroundAndTextColor(level.color, level.opacity)
+          level.bgColor = colors.bgColor
+          level.textColor = colors.textColor
           if (! level.description) {
             level.description = ""
           }
@@ -115,11 +147,8 @@
             let level = levelConfigAnnotated.find((level) => {
               return practice.assessment === level.label
             })
-            practice.color = level.color
-            practice.r = hexToRgb(practice.color).r
-            practice.g = hexToRgb(practice.color).g
-            practice.b = hexToRgb(practice.color).b
-            practice.opacity = level.opacity
+            practice.bgColor = level.bgColor
+            practice.textColor = level.textColor
           }
         }
         return disciplinesAnnotated
