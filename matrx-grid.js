@@ -202,7 +202,9 @@
 	   3: {1:[3], 2:[2, 1], 3:[1, 1, 1]},
 	   4: {1:[4], 2:[2, 2], 3:[2, 1, 1], 4:[1, 1, 1, 1]},
 	   5: {1:[5], 2:[2, 3], 3:[2, 2, 1], 4:[2, 1, 1, 1], 5:[1, 1, 1, 1, 1]},
-	   6: {1:[6], 2:[3, 3], 3:[2, 2, 2], 4:[2, 2, 1, 1], 5:[2, 1, 1, 1, 1], 6:[1, 1, 1, 1, 1, 1]},  // TODO: Expand this to allow for up to 8
+	   6: {1:[6], 2:[3, 3], 3:[2, 2, 2], 4:[2, 2, 1, 1], 5:[2, 1, 1, 1, 1], 6:[1, 1, 1, 1, 1, 1]},
+	   7: {1:[7], 2:[4, 3], 3:[3, 2, 2], 4:[2, 2, 2, 1], 5:[2, 2, 1, 1, 1], 6:[2, 1, 1, 1, 1, 1], 7:[1, 1, 1, 1, 1, 1, 1]},
+	   8: {1:[8], 2:[4, 4], 3:[3, 3, 2], 4:[2, 2, 2, 2], 5:[2, 2, 2, 1, 1], 6:[2, 2, 1, 1, 1, 1], 7:[2, 1, 1, 1, 1, 1, 1], 8:[1, 1, 1, 1, 1, 1, 1, 1]},
 	 };
 
 
@@ -215,8 +217,8 @@
 	}
 
 	function error({maxPracticeCount}) {
-	  if (maxPracticeCount > 6) {  // TODO: Increase here and line below if we increase the spanTable
-	    throw new Error("Max allowed practices is 6. You have " + maxPracticeCount + " in one (or more) discipline(s)")
+	  if (maxPracticeCount > 8) {
+	    console.error("Max allowed practices is 8. You have " + maxPracticeCount + " in one (or more) discipline(s)");
 	    return true
 	  } else {
 	    return false
