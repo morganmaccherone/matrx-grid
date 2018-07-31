@@ -175,6 +175,14 @@ let getID = () =>
    return "#" + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1).split('.')[0]
  }
 
+ function div(i, j) {
+   return Math.trunc(i / j)
+ }
+
+ function mod(i, j) {
+   return i % j
+ }
+
  function bestTextColor(rgb) {
    if ((rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114) > 186) {
      return "#000000"
@@ -189,18 +197,6 @@ let getID = () =>
    const textColor = bestTextColor(rgb);
    return {bgColor, textColor}
  }
-
- const spanTable = {
-   1: {1:[1]},
-   2: {1:[2], 2:[1, 1]},
-   3: {1:[3], 2:[2, 1], 3:[1, 1, 1]},
-   4: {1:[4], 2:[2, 2], 3:[2, 1, 1], 4:[1, 1, 1, 1]},
-   5: {1:[5], 2:[2, 3], 3:[2, 2, 1], 4:[2, 1, 1, 1], 5:[1, 1, 1, 1, 1]},
-   6: {1:[6], 2:[3, 3], 3:[2, 2, 2], 4:[2, 2, 1, 1], 5:[2, 1, 1, 1, 1], 6:[1, 1, 1, 1, 1, 1]},
-   7: {1:[7], 2:[4, 3], 3:[3, 2, 2], 4:[2, 2, 2, 1], 5:[2, 2, 1, 1, 1], 6:[2, 1, 1, 1, 1, 1], 7:[1, 1, 1, 1, 1, 1, 1]},
-   8: {1:[8], 2:[4, 4], 3:[3, 3, 2], 4:[2, 2, 2, 2], 5:[2, 2, 2, 1, 1], 6:[2, 2, 1, 1, 1, 1], 7:[2, 1, 1, 1, 1, 1, 1], 8:[1, 1, 1, 1, 1, 1, 1, 1]},
- };
-
 
  function maxPracticeCount({disciplines}) {
   let maxPracticeCount = 0;
@@ -250,6 +246,9 @@ function disciplinesAnnotated({disciplines, levelConfigAnnotated, maxPracticeCou
   let disciplinesAnnotated = disciplines;
   for (let discipline of disciplines) {
     let i = 0;
+    const minCols = div(maxPracticeCount, discipline.practices.length);
+    let extraCols = mod(maxPracticeCount, discipline.practices.length);
+    let textWidthArray = [];  // each row in the form {i, width}  width is in charCount for now but could be pixelWidth later
     for (let practice of discipline.practices) {
       practice.id = getID();
       let level = levelConfigAnnotated.find((level) => {
@@ -257,10 +256,19 @@ function disciplinesAnnotated({disciplines, levelConfigAnnotated, maxPracticeCou
       });
       practice.bgColor = level.bgColor;
       practice.textColor = level.textColor;
-      practice.colspan = spanTable[maxPracticeCount][discipline.practices.length][i];
+      textWidthArray.push({i, width: practice.label.length});
+      practice.colspan = minCols;
       i++;
+    }  // for practice...
+    if (extraCols > 0) {
+      textWidthArray.sort((a, b) => a.width - b.width);
+      while (extraCols > 0) {
+        let {i} = textWidthArray.pop();
+        discipline.practices[i].colspan++;
+        extraCols--;
+      }
     }
-  }
+  }  // for discipline...
   return disciplinesAnnotated
 }
 
