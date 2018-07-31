@@ -5,10 +5,10 @@
   </tr>
   {#each disciplines as discipline}
     <tr>
-      <th>{discipline.discipline}</th>
+      <th>{discipline.label}</th>
       {#each discipline.practices as practice, i}
-        <!-- <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="color: {practice.textColor}; background-color: rgba({practice.r}, {practice.g}, {practice.b}, {practice.opacity});">{practice.practice}</td> -->
-        <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="color: {practice.textColor}; background-color: {practice.bgColor};">{practice.practice}</td>
+        <!-- <td colspan={spanTable[maxPracticeCount][discipline.practices.length][i]} style="color: {practice.textColor}; background-color: rgba({practice.r}, {practice.g}, {practice.b}, {practice.opacity});">{practice.label}</td> -->
+        <td colspan={practice.colspan} style="color: {practice.textColor}; background-color: {practice.bgColor};">{practice.label}</td>
       {/each}
     </tr>
   {/each}
@@ -48,6 +48,14 @@
 
   function rgbToHex(rgb) {
     return "#" + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1).split('.')[0]
+  }
+
+  function div(i, j) {
+    return Math.trunc(i / j)
+  }
+
+  function mod(i, j) {
+    return i % j
   }
 
   function bestTextColor(rgb) {
@@ -141,9 +149,10 @@
         return levelConfigAnnotated
       },
 
-      disciplinesAnnotated: ({disciplines, levelConfigAnnotated}) => {
+      disciplinesAnnotated: ({disciplines, levelConfigAnnotated, maxPracticeCount}) => {
         let disciplinesAnnotated = disciplines
         for (let discipline of disciplines) {
+          let i = 0
           for (let practice of discipline.practices) {
             practice.id = getID()
             let level = levelConfigAnnotated.find((level) => {
@@ -151,6 +160,8 @@
             })
             practice.bgColor = level.bgColor
             practice.textColor = level.textColor
+            practice.colspan = spanTable[maxPracticeCount][discipline.practices.length][i]
+            i++
           }
         }
         return disciplinesAnnotated

@@ -252,9 +252,10 @@
 	  return levelConfigAnnotated
 	}
 
-	function disciplinesAnnotated({disciplines, levelConfigAnnotated}) {
+	function disciplinesAnnotated({disciplines, levelConfigAnnotated, maxPracticeCount}) {
 	  let disciplinesAnnotated = disciplines;
 	  for (let discipline of disciplines) {
+	    let i = 0;
 	    for (let practice of discipline.practices) {
 	      practice.id = getID();
 	      let level = levelConfigAnnotated.find((level) => {
@@ -262,6 +263,8 @@
 	      });
 	      practice.bgColor = level.bgColor;
 	      practice.textColor = level.textColor;
+	      practice.colspan = spanTable[maxPracticeCount][discipline.practices.length][i];
+	      i++;
 	    }
 	  }
 	  return disciplinesAnnotated
@@ -286,8 +289,8 @@
 
 		var each_blocks = [];
 
-		for (var i = 0; i < each_value.length; i += 1) {
-			each_blocks[i] = create_each_block(component, get_each_context(ctx, each_value, i));
+		for (var i_1 = 0; i_1 < each_value.length; i_1 += 1) {
+			each_blocks[i_1] = create_each_block(component, get_each_context(ctx, each_value, i_1));
 		}
 
 		return {
@@ -301,8 +304,8 @@
 				th_1.textContent = "Practices";
 				text_4 = createText("\n  ");
 
-				for (var i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
+				for (var i_1 = 0; i_1 < each_blocks.length; i_1 += 1) {
+					each_blocks[i_1].c();
 				}
 				th_1.colSpan = ctx.maxPracticeCount;
 				th_1.className = "center svelte-17f3t0z";
@@ -316,8 +319,8 @@
 				appendNode(th_1, tr);
 				appendNode(text_4, table);
 
-				for (var i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].m(table, null);
+				for (var i_1 = 0; i_1 < each_blocks.length; i_1 += 1) {
+					each_blocks[i_1].m(table, null);
 				}
 			},
 
@@ -326,23 +329,23 @@
 					th_1.colSpan = ctx.maxPracticeCount;
 				}
 
-				if (changed.disciplines || changed.maxPracticeCount) {
+				if (changed.disciplines) {
 					each_value = ctx.disciplines;
 
-					for (var i = 0; i < each_value.length; i += 1) {
-						const child_ctx = get_each_context(ctx, each_value, i);
+					for (var i_1 = 0; i_1 < each_value.length; i_1 += 1) {
+						const child_ctx = get_each_context(ctx, each_value, i_1);
 
-						if (each_blocks[i]) {
-							each_blocks[i].p(changed, child_ctx);
+						if (each_blocks[i_1]) {
+							each_blocks[i_1].p(changed, child_ctx);
 						} else {
-							each_blocks[i] = create_each_block(component, child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(table, null);
+							each_blocks[i_1] = create_each_block(component, child_ctx);
+							each_blocks[i_1].c();
+							each_blocks[i_1].m(table, null);
 						}
 					}
 
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
+					for (; i_1 < each_blocks.length; i_1 += 1) {
+						each_blocks[i_1].d(1);
 					}
 					each_blocks.length = each_value.length;
 				}
@@ -360,14 +363,14 @@
 
 	// (6:2) {#each disciplines as discipline}
 	function create_each_block(component, ctx) {
-		var tr, th, text_value = ctx.discipline.discipline, text, text_1;
+		var tr, th, text_value = ctx.discipline.label, text, text_1;
 
 		var each_value_1 = ctx.discipline.practices;
 
 		var each_blocks = [];
 
-		for (var i = 0; i < each_value_1.length; i += 1) {
-			each_blocks[i] = create_each_block_1(component, get_each_context_1(ctx, each_value_1, i));
+		for (var i_1 = 0; i_1 < each_value_1.length; i_1 += 1) {
+			each_blocks[i_1] = create_each_block_1(component, get_each_context_1(ctx, each_value_1, i_1));
 		}
 
 		return {
@@ -377,8 +380,8 @@
 				text = createText(text_value);
 				text_1 = createText("\n      ");
 
-				for (var i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
+				for (var i_1 = 0; i_1 < each_blocks.length; i_1 += 1) {
+					each_blocks[i_1].c();
 				}
 			},
 
@@ -388,33 +391,33 @@
 				appendNode(text, th);
 				appendNode(text_1, tr);
 
-				for (var i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].m(tr, null);
+				for (var i_1 = 0; i_1 < each_blocks.length; i_1 += 1) {
+					each_blocks[i_1].m(tr, null);
 				}
 			},
 
 			p(changed, ctx) {
-				if ((changed.disciplines) && text_value !== (text_value = ctx.discipline.discipline)) {
+				if ((changed.disciplines) && text_value !== (text_value = ctx.discipline.label)) {
 					text.data = text_value;
 				}
 
-				if (changed.maxPracticeCount || changed.disciplines) {
+				if (changed.disciplines) {
 					each_value_1 = ctx.discipline.practices;
 
-					for (var i = 0; i < each_value_1.length; i += 1) {
-						const child_ctx = get_each_context_1(ctx, each_value_1, i);
+					for (var i_1 = 0; i_1 < each_value_1.length; i_1 += 1) {
+						const child_ctx = get_each_context_1(ctx, each_value_1, i_1);
 
-						if (each_blocks[i]) {
-							each_blocks[i].p(changed, child_ctx);
+						if (each_blocks[i_1]) {
+							each_blocks[i_1].p(changed, child_ctx);
 						} else {
-							each_blocks[i] = create_each_block_1(component, child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(tr, null);
+							each_blocks[i_1] = create_each_block_1(component, child_ctx);
+							each_blocks[i_1].c();
+							each_blocks[i_1].m(tr, null);
 						}
 					}
 
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
+					for (; i_1 < each_blocks.length; i_1 += 1) {
+						each_blocks[i_1].d(1);
 					}
 					each_blocks.length = each_value_1.length;
 				}
@@ -432,13 +435,13 @@
 
 	// (9:6) {#each discipline.practices as practice, i}
 	function create_each_block_1(component, ctx) {
-		var td, text_value = ctx.practice.practice, text, td_colspan_value;
+		var td, text_value = ctx.practice.label, text, td_colspan_value;
 
 		return {
 			c() {
 				td = createElement("td");
 				text = createText(text_value);
-				td.colSpan = td_colspan_value = spanTable[ctx.maxPracticeCount][ctx.discipline.practices.length][ctx.i];
+				td.colSpan = td_colspan_value = ctx.practice.colspan;
 				setStyle(td, "color", ctx.practice.textColor);
 				setStyle(td, "background-color", ctx.practice.bgColor);
 			},
@@ -449,11 +452,11 @@
 			},
 
 			p(changed, ctx) {
-				if ((changed.disciplines) && text_value !== (text_value = ctx.practice.practice)) {
+				if ((changed.disciplines) && text_value !== (text_value = ctx.practice.label)) {
 					text.data = text_value;
 				}
 
-				if ((changed.maxPracticeCount || changed.disciplines) && td_colspan_value !== (td_colspan_value = spanTable[ctx.maxPracticeCount][ctx.discipline.practices.length][ctx.i])) {
+				if ((changed.disciplines) && td_colspan_value !== (td_colspan_value = ctx.practice.colspan)) {
 					td.colSpan = td_colspan_value;
 				}
 
@@ -518,7 +521,7 @@
 			if (this._differs(state.levelConfigAnnotated, (state.levelConfigAnnotated = levelConfigAnnotated(state)))) changed.levelConfigAnnotated = true;
 		}
 
-		if (changed.disciplines || changed.levelConfigAnnotated) {
+		if (changed.disciplines || changed.levelConfigAnnotated || changed.maxPracticeCount) {
 			if (this._differs(state.disciplinesAnnotated, (state.disciplinesAnnotated = disciplinesAnnotated(state)))) changed.disciplinesAnnotated = true;
 		}
 	};
